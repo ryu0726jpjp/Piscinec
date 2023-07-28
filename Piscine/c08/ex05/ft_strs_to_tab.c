@@ -1,0 +1,92 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strs_to_tab.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rysakamo <rysakamo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/25 20:54:47 by rysakamo          #+#    #+#             */
+/*   Updated: 2023/07/25 22:18:13 by rysakamo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+// #include <stdio.h>
+#include "ft_stock_str.h"
+#include <stdlib.h>
+
+int	ft_strlen(char *str)
+{
+	int	len;
+
+	len = 0;
+	while (str[len])
+		len++;
+	return (len);
+}
+
+char	*ft_strdup(char *src)
+{
+	int		len;
+	char	*copy;
+	int		i;
+
+	len = ft_strlen(src);
+	copy = (char *)malloc(sizeof(char) * (len + 1));
+	if (copy == NULL)
+		return (NULL);
+	i = 0;
+	while (src[i])
+	{
+		copy[i] = src[i];
+		i++;
+	}
+	copy[i] = '\0';
+	return (copy);
+}
+
+t_stock_str	*create_stock_str(char *str)
+{
+	t_stock_str	*stock;
+
+	stock = (t_stock_str *)malloc(sizeof(t_stock_str));
+	if (stock == NULL)
+		return (NULL);
+	stock->size = ft_strlen(str);
+	stock->str = str;
+	stock->copy = ft_strdup(str);
+	if (stock->copy == NULL)
+	{
+		free(stock);
+		return (NULL);
+	}
+	return (stock);
+}
+
+t_stock_str	*ft_strs_to_tab(int ac, char **av)
+{
+	t_stock_str	*arr;
+	int			i;
+
+	if (ac <= 0 || av == NULL)
+		return (NULL);
+	arr = (t_stock_str *)malloc(sizeof(t_stock_str) * (ac + 1));
+	if (arr == NULL)
+		return (NULL);
+	i = 0;
+	while (i < ac)
+	{
+		arr[i] = *create_stock_str(av[i]);
+		if (arr[i].copy == NULL)
+		{
+			while (i > 0)
+			{
+				i--;
+				free(arr[i].copy);
+			}
+			return (NULL);
+		}
+		i++;
+	}
+	arr[i].str = NULL;
+	return (arr);
+}
